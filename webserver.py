@@ -75,6 +75,25 @@ class webserverHandler(BaseHTTPRequestHandler):
                 self.wfile.write(output)
                 return
 
+            if self.path.endswith('/delete'):
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+
+                restaurantIDPath = self.path.split("/")[1]
+                myRestaurant = session.query(Restaurant).filter_by(id=restaurantIDPath).one()
+
+                output = ""
+                output += "<html><body>"
+                output += '''<form method='POST' enctype='multipart/form-data' action='%(1)s/delete'>
+                    <h2> Are you sure you want to delete %(2)s? </h2>
+                    <input type ='submit' value='Delete'>
+                    ''' % {"1": myRestaurant.id, "2": myRestaurant.name}
+                output += "</form><a href='/restaurants'><button>Cancel</button></a>"
+                output += "</body></html>"
+                self.wfile.write(output)
+                return
+
             if self.path.endswith('/hello'):
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
@@ -155,6 +174,22 @@ class webserverHandler(BaseHTTPRequestHandler):
                     self.send_header('Location', '/restaurants')
                     self.end_headers()
 
+
+            if self.path.endswith('/delete'):
+                ctype, pdict = cgi.parse_header(self.headers.getheader('Content-type'))
+                if ctype == 'multipart/form-data':
+
+                    restaurantIDPath = self.path.split("/")[1]
+
+                    myRestaurantQuery = session.query(Restaurant).filter_by(id = restaurantIDPath).one()
+
+                    session.delete(myRestaurantQuery)
+                    session.commit()
+
+                    self.send_response(301)
+                    self.send_header('Content-type', 'text/html')
+                    self.send_header('Location', '/restaurants')
+                    self.end_headers()
 
         except IOError:
             pass
