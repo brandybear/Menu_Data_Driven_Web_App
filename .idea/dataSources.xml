@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="3656527122">
+  <component name="DataSourceManagerImpl" format="xml" hash="3947418938">
     <data-source source="LOCAL" name="Restaurant Menu" uuid="72e0f4b1-826b-4c85-a739-095f12e46b2d">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
