@@ -1,6 +1,6 @@
 __author__ = 'Brandybear'
 
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request, redirect
 app = Flask(__name__)
 
 from sqlalchemy import create_engine
@@ -31,9 +31,18 @@ def restaurantMenu(restaurant_id):
     # return output
 
 #Task 1: Create route for newMenuItem function here
-@app.route('/restaurants/<int:restaurant_id>/add_item/')
+@app.route('/restaurants/<int:restaurant_id>/add_item/', methods=['GET', 'POST'])
 def newMenuItem(restaurant_id):
-    return "page to create a new menu item.  Task 1 complete!"
+    if request.method == 'POST':
+        newItem = MenuItem(name = request.form['name'], restaurant_id = restaurant_id)
+        session.add(newItem)
+        session.commit()
+        return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
+
+    else:
+        return render_template('add_item.html', restaurant_id=restaurant_id)
+
+    #return "page to create a new menu item.  Task 1 complete!"
 
 #Task 2: Create route for editMenuItem function here
 @app.route('/restaurants/<int:restaurant_id>/edit_item/<int:menu_id>/')
