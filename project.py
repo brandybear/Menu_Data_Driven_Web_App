@@ -1,6 +1,6 @@
 __author__ = 'Brandybear'
 
-from flask import Flask, render_template, url_for, request, redirect, flash
+from flask import Flask, render_template, url_for, request, redirect, flash, jsonify
 app = Flask(__name__)
 
 from sqlalchemy import create_engine
@@ -12,6 +12,19 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+#Making an API Endpoint (GET Request)
+@app.route('/restaurants/<int:restaurant_id>/menu/JSON')
+def restaurantMenuJSON(restaurant_id):
+    restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
+    items = session.query(MenuItem).filter_by(restaurant_id=restaurant_id).all()
+    return jsonify(MenuItems=[i.serialize for i in items])
+
+@app.route('/restaurants/<int:restaurant_id>/menu/<int:menu_id>/JSON')
+def restaurantMenuItemJSON(restaurant_id, menu_id):
+    restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
+    item = session.query(MenuItem).filter_by(id=menu_id).one()
+    return jsonify(MenuItem=item.serialize)
 
 @app.route('/')
 @app.route('/restaurants/<int:restaurant_id>/')
